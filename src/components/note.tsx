@@ -97,10 +97,11 @@ export const Note = (props : {
                     setNotes(notes().slice(1))
                 })
             }
+            metronomeAccentAudio.currentTime = 0;
             metronomeAccentAudio.play()
         }
         if (e == 'INCREMENT') {
-            metronomeAudio.load()
+            metronomeAudio.currentTime = 0;
             metronomeAudio.play()
         }
         if (e == "STOP") {
