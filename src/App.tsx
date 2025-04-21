@@ -1,25 +1,26 @@
-import type { Component } from 'solid-js';
-
-import logo from './logo.svg';
-import styles from './App.module.css';
+import { createSignal, type Component } from 'solid-js';
+import { Metronome } from './components/metronome';
+import { Note } from './components/note';
+import { IntervalEvent, MetronomeSubscriber } from './types';
 
 const App: Component = () => {
+    const [mSubs, setMSubs] = createSignal<MetronomeSubscriber[]>([])
+    
+    function onMetronomeEvent (e : IntervalEvent) {
+        mSubs().forEach(sub => sub(e))
+    }
+    function subscribeToMetronome (cb : MetronomeSubscriber) {
+        setMSubs([...mSubs(), cb])
+    }
+    function unsubscribeFromMetronome (cb: MetronomeSubscriber) {
+        setMSubs(mSubs().filter(sub => sub !== cb))
+    }
   return (
-    <div class={styles.App}>
-      <header class={styles.header}>
-        <img src={logo} class={styles.logo} alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          class={styles.link}
-          href="https://github.com/solidjs/solid"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn Solid
-        </a>
-      </header>
+    <div class='flex flex-col items-center'>
+        <div class='flex flex-col items-center w-52 gap-2 mt-5'>
+            <Metronome onMetronomeEvt={onMetronomeEvent}/>
+            <Note subscribeToInterval={subscribeToMetronome} unsubscribeFromInterval={unsubscribeFromMetronome} />
+        </div>
     </div>
   );
 };
